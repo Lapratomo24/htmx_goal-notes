@@ -22,7 +22,7 @@ app.get('/', (req, res) => {
       <main>
         <h1>Manage your goals</h1>
         <section>
-          <form hx-post="/goals" hx-target="#goals" hx-select="#goals" hx-swap="outerHTML" id="goal-form">
+          <form hx-post="/goals" hx-target="#goals" hx-select="#goals" hx-swap="beforeend" id="goal-form">
             <div>
               <label htmlFor="goal">Goal</label>
               <input type="text" id="goal" name="goal" />
@@ -35,7 +35,7 @@ app.get('/', (req, res) => {
             ${courseGoals.map((goal, index) => `
               <li id="goal-${index}">
                 <span>${goal}</span>
-                <button>Remove</button>
+                <button hx-delete="/goals/${index}" hx-target="#goal-${index}" hx-swap="outerHTML">Remove</button>
               </li>
             `).join("")}
           </ul>
@@ -49,7 +49,23 @@ app.get('/', (req, res) => {
 app.post("/goals", (req, res) => {
   const addedGoals = req.body.goal;
   courseGoals.push(addedGoals);
-  res.redirect("/")
+  const index = courseGoals.length - 1;
+  res.send(`
+    <li id="goal-${index}">
+      <span>${addedGoals}</span>
+      <button 
+      hx-delete="/goals/${index}" 
+      hx-target="#goal-${index}" 
+      hx-swap="outerHTML"
+      >Remove</button>
+    </li>
+  `)
+});
+
+app.delete("/goals/:idx", (req, res) => {
+  const index = req.params.idx;
+  courseGoals.splice(index, 1);
+  res.send();
 })
 
 app.listen(3000);
