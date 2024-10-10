@@ -31,7 +31,7 @@ app.get('/', (req, res) => {
       <main>
         <h1>Manage your goals</h1>
         <section>
-          <form hx-post="/goals" hx-target="#goals" hx-swap="beforeend" id="goal-form">
+          <form hx-post="/goals" hx-target="#goals" hx-swap="beforeend" hx-on:submit="document.querySelector('form').reset()" id="goal-form">
             <div>
               <label htmlFor="goal">Goal</label>
               <input type="text" id="goal" name="goal" />
@@ -40,7 +40,7 @@ app.get('/', (req, res) => {
           </form>
         </section>
         <section>
-          <ul id="goals" hx-swap="outerHTML">
+          <ul id="goals" hx-swap="outerHTML" hx-confirm="Delete this item?">
             ${courseGoals.map((goal) =>
               renderListItems(goal.id, goal.text)
             ).join("")}
